@@ -22,3 +22,5 @@ nb = "1.0.0"
 
 [dev-dependencies]
 test_support = {path = "test_support"}
+clap = { vaerion = "0.4", features = ["derive"] }
+linux-embedded-hal = "0.3"
