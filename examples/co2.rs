@@ -45,5 +45,5 @@ fn main()
 	let co2_value = embedded_timeout_macros::block_timeout!(&mut timer, co2_sensor.read_co2_ppm())
 		.expect("Failed to read CO₂ value");
 
-	println!("CO₂ concentration: {co2_value} ppm");
+	println!("{co2_value}");
 }
