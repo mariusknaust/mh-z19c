@@ -2,6 +2,7 @@ use linux_embedded_hal as hal;
 
 use clap::Parser as _;
 use hal::serial_core::SerialPort as _;
+use embedded_timeout_macros::embedded_hal::timer::CountDown as _;
 
 /// Read co2 measurements in ppm from a MH-Z19c connected via a serial port
 #[derive(Debug, clap::Parser)]
@@ -11,6 +12,9 @@ struct Options
 	/// Serial port device
 	#[clap(short, long)]
 	device: std::path::PathBuf,
+	/// Timeout for waiting on a measurement
+	#[clap(short, long, value_parser = humantime::parse_duration, default_value = "500ms")]
+	timeout: std::time::Duration,
 }
 
 fn main()
@@ -36,7 +40,9 @@ fn main()
 	let serial = hal::Serial(tty_port);
 	let mut co2_sensor = mh_z19c::MhZ19C::new(serial);
 
-	let co2_value = nb::block!(co2_sensor.read_co2_ppm())
+	let mut timer = hal::SysTimer::new();
+	timer.start(options.timeout);
+	let co2_value = embedded_timeout_macros::block_timeout!(&mut timer, co2_sensor.read_co2_ppm())
 		.expect("Failed to read CO₂ value");
 
 	println!("CO₂ concentration: {co2_value} ppm");

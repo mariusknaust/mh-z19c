@@ -23,4 +23,6 @@ nb = "1.0.0"
 [dev-dependencies]
 test_support = {path = "test_support"}
 clap = { vaerion = "0.4", features = ["derive"] }
+humantime = "2.1"
 linux-embedded-hal = "0.3"
+embedded-timeout-macros = "0.3"
